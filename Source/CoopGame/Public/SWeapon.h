@@ -25,8 +25,11 @@ protected:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
 
+	// 즉발뎀 혹은 지속뎀 등등
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="Weapon")
+	TSubclassOf<UDamageType> DamageType;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
-
 };
