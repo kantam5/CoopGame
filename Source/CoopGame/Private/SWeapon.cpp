@@ -41,7 +41,7 @@ void ASWeapon::Fire()
 
 		// add option
 		FCollisionQueryParams QueryParams;
-		QueryParams.AddIgnoredActor(MyOwner);
+		QueryParams.AddIgnoredActor(GetOwner());
 		QueryParams.AddIgnoredActor(this);
 		QueryParams.bTraceComplex = true;
 
@@ -51,12 +51,13 @@ void ASWeapon::Fire()
 			// Blocking Hit! Proccess damage
 			AActor* HitActor = Hit.GetActor();
 
-			UGameplayStatics::ApplyDamage(HitActor, 20.0f, MyOwner->GetInstigatorController(), this, DamageType);
+			UGameplayStatics::ApplyPointDamage(HitActor, 20.0f, ShotDirection, Hit, MyOwner->GetInstigatorController(), this, DamageType);
+			
+			UE_LOG(LogTemp, Log, TEXT("Hit"));
 		}
 		
 		DrawDebugLine(GetWorld(), EyeLocation, TraceEnd, FColor::White, false, 1.0f, 0.f, 1.0f);
 	}
-
 }
 
 // Called every frame
