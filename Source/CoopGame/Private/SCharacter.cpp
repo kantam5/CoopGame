@@ -27,7 +27,7 @@ void ASCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	
+	DefaultFOV = CameraComp->FieldOfView;
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -55,6 +55,9 @@ void ASCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	float CurrentFOV = bWantsToZoom ? ZoomedFOV : DefaultFOV;
+
+	CameraComp->SetFieldOfView(CurrentFOV);
 }
 
 // Called to bind functionality to input

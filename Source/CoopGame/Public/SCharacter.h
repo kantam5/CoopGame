@@ -36,6 +36,13 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Components")
 	USpringArmComponent* SpringArmComp;
 
+	bool bWantsToZoom;
+
+	float ZoomedFOV;
+
+	/* Default FOV set during begin play */
+	float DefaultFOV;
+
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

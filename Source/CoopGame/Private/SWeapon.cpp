@@ -84,7 +84,6 @@ void ASWeapon::Fire()
 			{
 				TracerComp->SetVectorParameter(TracerTargetName, TracerEndPoint);
 			}
-
 		}
 	}
 }
