@@ -15,15 +15,14 @@ public:
 	// Sets default values for this actor's properties
 	ASWeapon();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UFUNCTION(BlueprintCallable, Category="Weapon", meta = (BlueprintProtected))
+	virtual void Fire();
 
+protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USkeletalMeshComponent* MeshComp;
 
-	UFUNCTION(BlueprintCallable, Category="Weapon")
-	virtual void Fire();
+	void PlayFireEffects(FVector TracerEndPoint);
 
 	// 즉발뎀 혹은 지속뎀 등등
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
@@ -43,8 +42,4 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
 	UParticleSystem* TracerEffect;
-
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 };
