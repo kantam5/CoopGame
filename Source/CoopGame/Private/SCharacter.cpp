@@ -7,6 +7,7 @@
 #include "GameFramework/PawnMovementComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "SWeapon.h"
+#include "Components/SHealthComponent.h"
 #include "../CoopGame.h"
 
 // Sets default values
@@ -23,6 +24,8 @@ ASCharacter::ASCharacter()
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(COLLISTION_WEAPON, ECR_Ignore);
 	
+	HealthComp = CreateDefaultSubobject<USHealthComponent>(TEXT("HealthComp"));
+
 	CameraComp = CreateDefaultSubobject<UCameraComponent>(TEXT("CameraComp"));
 	CameraComp->SetupAttachment(SpringArmComp);
 
@@ -49,6 +52,8 @@ void ASCharacter::BeginPlay()
 		CurrentWeapon->SetOwner(this);
 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetNotIncludingScale, WeaponAttachSocketName);
 	}
+
+	HealthComp->OnHealthChanged.AddDynamic(this, &ASCharacter::OnHealthChanged);
 }
 
 void ASCharacter::MoveForward(float Value)
@@ -94,6 +99,25 @@ void ASCharacter::StopFire()
 	if (CurrentWeapon)
 	{
 		CurrentWeapon->StopFire();
+	}
+}
+
+void ASCharacter::OnHealthChanged(USHealthComponent* OwningHealthComp, float Health, float HealthDeltaconst,
+	const UDamageType* DamageType, AController* InstigatedBy, AActor* DamageCauser)
+{
+	if (Health <= 0 && !bDied)
+	{
+		// Die
+		bDied = true;
+
+		GetMovementComponent()->StopMovementImmediately();
+		GetCapsuleComponent()->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+
+		// 컨트롤 불가
+		DetachFromControllerPendingDestroy();
+
+		// 10초 후에 destroy
+		SetLifeSpan(10.0f);
 	}
 }
 
