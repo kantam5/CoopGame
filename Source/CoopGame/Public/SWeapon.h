@@ -6,6 +6,20 @@
 #include "GameFramework/Actor.h"
 #include "SWeapon.generated.h"
 
+// contain inforamation of a single hitscan weapon linetrace
+USTRUCT()
+struct FHitScanTrace
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY()
+	TEnumAsByte<EPhysicalSurface> SurfaceType;
+
+	UPROPERTY()
+	FVector_NetQuantize TraceTo;
+};
+
 UCLASS()
 class COOPGAME_API ASWeapon : public AActor
 {
@@ -24,10 +38,18 @@ protected:
 
 	virtual void Fire();
 
+	// Server : Push this request to the hosting server
+	// Reliable : It's Guaranteed to enventually get to the server
+	// WithValidation : 
+	UFUNCTION(Server, Reliable, WithValidation)
+	void ServerFire();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Components")
 	USkeletalMeshComponent* MeshComp;
 
 	void PlayFireEffects(FVector TracerEndPoint);
+
+	void PlayImpactEffects(EPhysicalSurface SurfaceType, FVector ImpactPoint);
 
 	// 즉발뎀 혹은 지속뎀 등등
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Weapon")
@@ -66,4 +88,14 @@ protected:
 	float RateOfFire;
 	
 	float TimeBetweenShots;
+
+	UPROPERTY(ReplicatedUsing = OnRep_HitScanTrace)
+	FHitScanTrace HitScanTrace;
+
+	UFUNCTION()
+	void OnRep_HitScanTrace();
+
+public:
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };
